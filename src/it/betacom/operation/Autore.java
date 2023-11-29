@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -64,6 +65,93 @@ public class Autore {
 		}
 	}
 	
+	public static void getAgeAutoriNazione(String nazionalita) {
+		createOrDropTable();	
+	
+		try {
+			Connection connection = DriverManager.getConnection(url_jdbc, username, password);
+			String query = "SELECT nome, cognome, anno_nascita, anno_morte FROM autori WHERE nazione = ?";
+			PreparedStatement pStm = connection.prepareStatement(query);
+			pStm.setString(1, nazionalita);
+			
+			ResultSet rs = pStm.executeQuery();
+			while(rs.next()) {
+				String nomeAutore = rs.getString("nome");
+				String cognomeAutore = rs.getString("cognome");
+				String dataNascita = rs.getString("anno_nascita");
+				Integer annoMorte = rs.getInt("anno_morte");
+				
+				int age = calculateAge(dataNascita, annoMorte);
+				insertIntoAutoreEtaTemp(connection, nomeAutore, cognomeAutore, age);
+				
+				
+			}
+			viewAutoriNazionalita(connection);
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+	}
+	
+	public static void viewAutoriNazionalita(Connection connection) {
+		try {
+			Statement stm = connection.createStatement();
+			ResultSet rs = stm.executeQuery("SELECT nome, cognome FROM autori_eta_temp");
+			
+			while (rs.next()) {
+	            System.out.println(
+	                "Nome: " + rs.getString("nome") +
+	                ", Cognome: " + rs.getString("cognome"));
+			} 
+			
+		}catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+	}
+	
+	private static void createOrDropTable() {
+		
+		try {
+			Connection connection = DriverManager.getConnection(url_jdbc, username, password);
+			Statement stm = connection.createStatement();
+			
+			//Drop table if exists
+			stm.executeUpdate("DROP TABLE IF EXISTS autori_eta_temp");
+			//Create table
+			stm.executeUpdate("CREATE TABLE autori_eta_temp (" +
+	                "id INT AUTO_INCREMENT PRIMARY KEY," +
+	                "nome VARCHAR(255)," +
+	                "cognome VARCHAR(255)," +
+	                "eta INT," +
+	                "data_odierna DATE"
+	                + ")");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void insertIntoAutoreEtaTemp(Connection connection, String nome, String cognome, int age) {
+		
+		String insertQuery = "INSERT INTO autori_eta_temp (nome, cognome, eta, data_odierna) VALUES (?, ?, ?, ?)";
+		try {
+			PreparedStatement pStm = connection.prepareStatement(insertQuery);
+			pStm.setString(1, nome);
+			pStm.setString(2, cognome);
+			pStm.setInt(3, age);
+			
+			//Data odierna
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			String currentDate = dateFormat.format(Calendar.getInstance().getTime());
+			pStm.setString(4, currentDate);
+			
+			//Eseguo l'inserimento
+			pStm.executeUpdate();
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+	}
 	
 	private static int calculateAge(String dataDiNascita, Integer annoMorte) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy");
