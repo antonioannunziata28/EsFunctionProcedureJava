@@ -1,0 +1,15 @@
+Functions exercise, procedure, java
+
+1 we create a function that, passing the name and surname of a living author, returns the age (number of years)
+get_age_by_author
+
+2 we create a procedure get_age_authori_nazione(in varcharnation)
+which returns a list of authors (name, surname, age) of the country indicated as a parameter
+and inserts them into a table autore_eta_temp table. (name varchar, surname int age, today_date).
+Logically it will create the table or drop the table at the beginning.
+
+3 create java main class which calls the procedure and stores the data obtained in a list which then prints the authors sorted by decreasing age on the screen.
+
+4 Create sql to recreate the author table(…), insert the records into the author table, create the function, create the procedure.
+
+5 (optional) you want to automate the launch of the main java program call by calling a LaunchProceduraJava.bat file every day at 10.00 in the morning on your machine (create Windows activity)
