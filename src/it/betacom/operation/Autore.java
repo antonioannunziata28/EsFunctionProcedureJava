@@ -12,20 +12,33 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class Autore {
+public class Autore implements Comparable<Autore>{
 
 	private static String url_jdbc = "jdbc:mysql://localhost:3306/libri";
-	private static String username = "root";
-	private static String password = "rootroot";
+    private static String username = "root";
+    private static String password = "rootroot";
+
+    private int age;
+    private boolean isDead;
+
+    private String nome;
+    private String cognome;
+
+    public Autore(int age, boolean isDead) {
+        this.age = age;
+        this.isDead = isDead;
+    }
+
+    public Autore(int age, boolean isDead, String nome, String cognome) {
+        this(age, isDead);
+        this.nome = nome;
+        this.cognome = cognome;
+    }
 	
-	private int age;
-	private boolean isDead;
-	
-	public Autore(int age, boolean isDead) {
-		this.age = age;
-		this.isDead = isDead;
+	@Override
+	public int compareTo(Autore altroAutore) {
+		return Integer.compare(altroAutore.age, this.age);
 	}
-	
 	
 	public int getAge() {
 		return age;
@@ -110,7 +123,7 @@ public class Autore {
 		}
 	}
 	
-	private static void createOrDropTable() {
+	public static void createOrDropTable() {
 		
 		try {
 			Connection connection = DriverManager.getConnection(url_jdbc, username, password);
@@ -131,7 +144,7 @@ public class Autore {
 		}
 	}
 	
-	private static void insertIntoAutoreEtaTemp(Connection connection, String nome, String cognome, int age) {
+	public static void insertIntoAutoreEtaTemp(Connection connection, String nome, String cognome, int age) {
 		
 		String insertQuery = "INSERT INTO autori_eta_temp (nome, cognome, eta, data_odierna) VALUES (?, ?, ?, ?)";
 		try {
@@ -153,7 +166,7 @@ public class Autore {
 		}
 	}
 	
-	private static int calculateAge(String dataDiNascita, Integer annoMorte) {
+	public static int calculateAge(String dataDiNascita, Integer annoMorte) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy");
 		
 		try {
@@ -175,5 +188,53 @@ public class Autore {
 		return -1;
 		
 	}
+
+
+	public static String getUrl_jdbc() {
+		return url_jdbc;
+	}
+
+
+	public static String getUsername() {
+		return username;
+	}
+
+
+	public static String getPassword() {
+		return password;
+	}
+
+
+	public static void setUrl_jdbc(String url_jdbc) {
+		Autore.url_jdbc = url_jdbc;
+	}
+
+
+	public static void setUsername(String username) {
+		Autore.username = username;
+	}
+
+
+	public static void setPassword(String password) {
+		Autore.password = password;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public String getCognome() {
+		return cognome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public void setCognome(String cognome) {
+		this.cognome = cognome;
+	}
+
+	
 	
 }

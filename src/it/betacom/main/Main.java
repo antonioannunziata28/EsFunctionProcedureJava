@@ -1,6 +1,10 @@
 package it.betacom.main;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
+
+import it.betacom.operation.Autore;
 import it.betacom.operation.FunzioniMenu;
 
 public class Main {
@@ -25,8 +29,20 @@ public class Main {
 				break;
 			
 			case 2:
-				FunzioniMenu.ottieniEinserisciAutori(scanner);
-				break;
+				System.out.println("Inserisci la nazionalità degli autori che vuoi conoscere");
+			    String nazionalita = scanner.nextLine();
+			    List<Autore> autoriList = FunzioniMenu.getAutoreListByNazione(nazionalita);
+
+			    Collections.sort(autoriList, Collections.reverseOrder());
+
+			    System.out.println("Autori ordinati per età decrescente:");
+			    for (Autore autore : autoriList) {
+			        System.out.println("Nome: " + autore.getNome() +
+			                ", Cognome: " + autore.getCognome() +
+			                ", Età: " + autore.getAge());
+			    }
+			    
+			    break;
 				
 			case 3:
 				scanner.close();
